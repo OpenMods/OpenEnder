@@ -1,9 +1,9 @@
 package openender;
 
 import net.minecraftforge.common.DimensionManager;
+import openender.block.BlockUnbreakable;
 import openender.common.WorldProviderEnder;
-import openender.common.block.BlockUnbreakable;
-import openender.common.item.ItemEnderLocker;
+import openender.item.ItemEnderLocker;
 import openmods.config.*;
 
 public class Config {

@@ -1,7 +1,7 @@
-package openender.client;
+package openender.proxy;
 
-import openender.IOpenEnderProxy;
 import openender.OpenEnder;
+import openender.rendering.BlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy implements IOpenEnderProxy {

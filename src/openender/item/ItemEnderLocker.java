@@ -1,4 +1,4 @@
-package openender.common.item;
+package openender.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import openender.Config;
 import openender.OpenEnder;
 import openender.common.EnderTeleporter;
-import openender.common.utils.PlayerDataUtils;
+import openender.utils.PlayerDataUtils;
 
 public class ItemEnderLocker extends Item {
 

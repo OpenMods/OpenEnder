@@ -1,4 +1,4 @@
-package openender;
+package openender.proxy;
 
 import openmods.api.IProxy;
 

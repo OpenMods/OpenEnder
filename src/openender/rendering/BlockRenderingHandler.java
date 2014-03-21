@@ -1,4 +1,4 @@
-package openender.client;
+package openender.rendering;
 
 import openender.OpenEnder;
 import openmods.renderer.BlockRenderingHandlerBase;

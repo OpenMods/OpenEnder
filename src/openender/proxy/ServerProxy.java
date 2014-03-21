@@ -1,6 +1,5 @@
-package openender.server;
+package openender.proxy;
 
-import openender.IOpenEnderProxy;
 
 public class ServerProxy implements IOpenEnderProxy {
 

@@ -1,4 +1,4 @@
-package openender.common.utils;
+package openender.utils;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
