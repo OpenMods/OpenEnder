@@ -2,6 +2,9 @@ package openender.common;
 
 import java.util.List;
 
+import appeng.api.Blocks;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
@@ -39,10 +42,17 @@ public class ChunkProviderEnder implements IChunkProvider {
                 extendedblockstorage = new ExtendedBlockStorage(y, !world.provider.hasNoSky);
                 chunk.getBlockStorageArray()[l] = extendedblockstorage;
             }
-
+            
             for (int _x = 0; _x < 16; ++_x) {
                 for (int _z = 0; _z < 16; ++_z)  {
-                    extendedblockstorage.setExtBlockID(_x, y & 15, _z, y < 10 ? 1 : 0);
+                	
+                	int blockId = 0;
+                	
+                	if (x == 0 && z == 0 && y == 10) {
+                		blockId = Block.bedrock.blockID;
+                	}
+                	
+                    extendedblockstorage.setExtBlockID(_x, y & 15, _z, blockId);
                     extendedblockstorage.setExtBlockMetadata(_x, y & 15, _z, 0);
                 }
             }

@@ -10,8 +10,8 @@ public class WorldProviderEnder extends WorldProvider {
 		return "Ender";
 	}
 
+	@Override
 	public IChunkProvider createChunkGenerator() {
 		return new ChunkProviderEnder(worldObj);
 	}
-
 }
