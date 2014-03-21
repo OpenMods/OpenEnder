@@ -7,6 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 import openender.block.BlockUnbreakable;
+import openender.common.DimensionDataManager;
 import openender.item.ItemEnderLocker;
 import openmods.OpenMods;
 import openmods.api.IProxy;
@@ -16,9 +17,7 @@ import openmods.config.RegisterItem;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
@@ -76,5 +75,10 @@ public class OpenEnder {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		proxy.postInit();
+	}
+
+	@EventHandler
+	public void onServerStart(FMLServerStartingEvent evt) {
+		DimensionDataManager.instance.registerDimensions(evt.getServer());
 	}
 }

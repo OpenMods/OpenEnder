@@ -1,6 +1,5 @@
 package openender.proxy;
 
-
 public class ServerProxy implements IOpenEnderProxy {
 
 	@Override
