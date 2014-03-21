@@ -7,8 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import openender.Config;
 import openender.OpenEnder;
+import openender.common.DimensionDataManager;
 import openender.common.EnderTeleporter;
-import openender.utils.PlayerDataUtils;
 
 public class ItemEnderLocker extends Item {
 
@@ -21,7 +21,7 @@ public class ItemEnderLocker extends Item {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 
 		if (player instanceof EntityPlayerMP) {
-			int enderId = PlayerDataUtils.getPlayerDimensionId(player);
+			int enderId = DimensionDataManager.instance.getDimensionForPlayer(player.username);
 			EnderTeleporter.teleport(player, enderId);
 		}
 

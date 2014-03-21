@@ -10,7 +10,6 @@ import net.minecraft.world.WorldServer;
 public class EnderTeleporter extends Teleporter {
 
 	private final ChunkCoordinates coords;
-	private final WorldServer worldObj;
 
 	public EnderTeleporter(WorldServer world, ChunkCoordinates coords) {
 		super(world);
@@ -18,7 +17,6 @@ public class EnderTeleporter extends Teleporter {
 			coords = world.getSpawnPoint();
 		}
 		this.coords = coords;
-		this.worldObj = world;
 	}
 
 	@Override

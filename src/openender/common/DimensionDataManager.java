@@ -1,6 +1,8 @@
 package openender.common;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
@@ -19,8 +21,11 @@ public class DimensionDataManager {
 
 	public static class DimensionsData extends WorldSavedData {
 
-		private static final String OWNER_DIMS_TAG = "OwnerDims";
+		private static final String MANAGED_TAG = "AllDimensions";
+		private static final String PRIVATE_TAG = "PrivateDimensions";
+
 		private int[] ownedDims = new int[0];
+		private NBTTagCompound playerDims = new NBTTagCompound();
 
 		public DimensionsData(String id) {
 			super(id);
@@ -28,12 +33,14 @@ public class DimensionDataManager {
 
 		@Override
 		public void readFromNBT(NBTTagCompound tag) {
-			ownedDims = tag.getIntArray(OWNER_DIMS_TAG);
+			ownedDims = tag.getIntArray(MANAGED_TAG).clone();
+			playerDims = (NBTTagCompound)tag.getCompoundTag(PRIVATE_TAG).copy();
 		}
 
 		@Override
 		public void writeToNBT(NBTTagCompound tag) {
-			tag.setIntArray(OWNER_DIMS_TAG, ownedDims);
+			tag.setIntArray(MANAGED_TAG, ownedDims);
+			tag.setTag(PRIVATE_TAG, playerDims.copy());
 		}
 
 		private void registerDims() {
@@ -41,11 +48,36 @@ public class DimensionDataManager {
 				DimensionManager.registerDimension(dim, Config.enderDimensionProviderId);
 		}
 
-		public void addDimension(int id) {
+		private void addDimension(int id) {
 			ownedDims = ArrayUtils.add(ownedDims, id);
 			setDirty(true);
 		}
 
+		public int registerNewDimension() {
+			int id = DimensionManager.getNextFreeDimId();
+			addDimension(id);
+			return id;
+		}
+
+		public int getDimensionForPlayer(String playerName) {
+			NBTBase entry = playerDims.getTag(playerName);
+
+			final int dimensionId;
+			if (entry instanceof NBTTagInt) {
+				dimensionId = ((NBTTagInt)entry).data;
+			}
+			else {
+				dimensionId = registerNewDimension();
+				playerDims.setInteger(playerName, dimensionId);
+				setDirty(true);
+			}
+
+			if (!DimensionManager.isDimensionRegistered(dimensionId)) {
+				DimensionManager.registerDimension(dimensionId, Config.enderDimensionProviderId);
+			}
+
+			return dimensionId;
+		}
 	}
 
 	private DimensionsData data;
@@ -66,9 +98,12 @@ public class DimensionDataManager {
 
 	public int getNewDimensionId() {
 		Preconditions.checkState(data != null, "Not yet initialized");
-		int id = DimensionManager.getNextFreeDimId();
-		data.addDimension(id);
-		return id;
+		return data.registerNewDimension();
+	}
+
+	public int getDimensionForPlayer(String playerName) {
+		Preconditions.checkState(data != null, "Not yet initialized");
+		return data.getDimensionForPlayer(playerName);
 	}
 
 }
