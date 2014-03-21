@@ -1,54 +1,59 @@
 package openender.utils;
 
-import java.util.Stack;
+import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
 import openmods.utils.PlayerUtils;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class PlayerDataManager {
 
+	public static final String OPEN_ENDER_TAG = "OpenEnder";
 	public static final String SPAWNS_TAG = "spawns";
-	public static final String SPAWNS_TAG_COUNT = "count";
-	public static final String SPAWNS_TAG_PREFIX = "spawn_";
 
-	public static class SpawnList extends Stack<SpawnLocation> {
+	public static class SpawnList {
+		private final LinkedList<SpawnLocation> locations = Lists.newLinkedList();
 
-		private NBTTagCompound persistTag;
+		private final NBTTagCompound persistTag;
 
 		public SpawnList(EntityPlayer player) {
-			persistTag = PlayerUtils.getModPlayerPersistTag(player, "OpenEnder");
-			initialize();
+			persistTag = PlayerUtils.getModPlayerPersistTag(player, OPEN_ENDER_TAG);
+			load();
 		}
 
-		private void initialize() {
-
-			clear();
-
-			if (persistTag.hasKey(SPAWNS_TAG)) {
-
-				NBTTagCompound spawnsTag = persistTag.getCompoundTag(SPAWNS_TAG);
-				int amount = spawnsTag.getInteger(SPAWNS_TAG_COUNT);
-
-				for (int i = 0; i < amount; i++) {
-					NBTTagCompound spawnLocationTag = spawnsTag.getCompoundTag(SPAWNS_TAG_PREFIX + i);
-					add(SpawnLocation.readFromNBT(spawnLocationTag));
-				}
-
+		protected void load() {
+			NBTTagList spawnsTag = persistTag.getTagList(SPAWNS_TAG);
+			for (int i = 0; i < spawnsTag.tagCount(); i++) {
+				NBTTagCompound spawnLocationTag = (NBTTagCompound)spawnsTag.tagAt(i);
+				locations.add(SpawnLocation.readFromNBT(spawnLocationTag));
 			}
 		}
 
-		public void save() {
+		private void save() {
+			NBTTagList spawnsTag = new NBTTagList();
 
-			NBTTagCompound spawnsTag = new NBTTagCompound();
+			for (SpawnLocation location : locations)
+				spawnsTag.appendTag(location.writeToNBT());
 
-			spawnsTag.setInteger(SPAWNS_TAG_COUNT, size());
-			for (int i = 0; i < size(); i++) {
-				spawnsTag.setCompoundTag(SPAWNS_TAG_PREFIX + i, get(i).writeToNBT());
-			}
+			persistTag.setTag(SPAWNS_TAG, spawnsTag);
+		}
 
-			persistTag.setCompoundTag(SPAWNS_TAG, spawnsTag);
+		public SpawnLocation pop() {
+			if (locations.isEmpty()) return null;
+			SpawnLocation location = locations.pop();
+			save();
+			return location;
+		}
+
+		public void push(SpawnLocation location) {
+			locations.push(location);
+			save();
 		}
 	}
 
@@ -81,28 +86,29 @@ public class PlayerDataManager {
 					));
 		}
 
+		@Override
+		public String toString() {
+			return Objects.toStringHelper("spawn location")
+					.add("dimensionId", dimensionId)
+					.add("x", position.posX)
+					.add("y", position.posY)
+					.add("z", position.posZ)
+					.toString();
+		}
+
 	}
 
 	public static void pushSpawnLocation(EntityPlayer player) {
-
-		SpawnList spawnList = new SpawnList(player);
-
 		ChunkCoordinates chunkCoord = new ChunkCoordinates(
-				(int)player.posX,
-				(int)player.posY,
-				(int)player.posZ);
+				MathHelper.floor_double(player.posX),
+				MathHelper.floor_double(player.posY),
+				MathHelper.floor_double(player.posZ));
 
-		spawnList.push(new SpawnLocation(player.dimension, chunkCoord));
-
-		spawnList.save();
+		new SpawnList(player).push(new SpawnLocation(player.dimension, chunkCoord));
 	}
 
 	public static SpawnLocation popSpawnLocation(EntityPlayer player) {
-		SpawnList spawnList = new SpawnList(player);
-		if (spawnList.empty()) { return null; }
-		SpawnLocation location = spawnList.pop();
-		spawnList.save();
-		return location;
+		return new SpawnList(player).pop();
 	}
 
 }

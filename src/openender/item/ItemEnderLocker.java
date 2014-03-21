@@ -22,13 +22,14 @@ public class ItemEnderLocker extends Item {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 
 		if (player instanceof EntityPlayerMP) {
-			PlayerDataManager.pushSpawnLocation(player);
-			int enderId = DimensionDataManager.instance.getDimensionForPlayer(player.username);
-			EnderTeleporter.teleport(player, enderId);
+			final int privateWorldId = DimensionDataManager.instance.getDimensionForPlayer(player.username);
+			if (privateWorldId != world.provider.dimensionId) {
+				PlayerDataManager.pushSpawnLocation(player);
+				EnderTeleporter.teleport(player, privateWorldId);
+			}
 		}
 
 		return stack;
 
 	}
-
 }
