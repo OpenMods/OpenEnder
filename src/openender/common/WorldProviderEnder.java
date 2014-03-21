@@ -1,5 +1,6 @@
 package openender.common;
 
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -39,5 +40,10 @@ public class WorldProviderEnder extends WorldProvider {
 	@Override
 	public boolean isDaytime() {
 		return false;
+	}
+
+	@Override
+	public ChunkCoordinates getSpawnPoint() {
+		return new ChunkCoordinates(8, 14, 8);
 	}
 }
