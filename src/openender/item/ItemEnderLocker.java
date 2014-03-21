@@ -9,6 +9,7 @@ import openender.Config;
 import openender.OpenEnder;
 import openender.common.DimensionDataManager;
 import openender.common.EnderTeleporter;
+import openender.utils.PlayerDataManager;
 
 public class ItemEnderLocker extends Item {
 
@@ -21,6 +22,7 @@ public class ItemEnderLocker extends Item {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 
 		if (player instanceof EntityPlayerMP) {
+			PlayerDataManager.pushSpawnLocation(player);
 			int enderId = DimensionDataManager.instance.getDimensionForPlayer(player.username);
 			EnderTeleporter.teleport(player, enderId);
 		}

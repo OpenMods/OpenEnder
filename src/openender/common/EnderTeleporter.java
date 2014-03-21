@@ -32,9 +32,7 @@ public class EnderTeleporter extends Teleporter {
 	public static void teleport(EntityPlayer player, int dimensionId, ChunkCoordinates location) {
 
 		if (player instanceof EntityPlayerMP) {
-
 			EntityPlayerMP playerMP = (EntityPlayerMP)player;
-
 			EnderTeleporter teleporter = new EnderTeleporter(playerMP.mcServer.worldServerForDimension(dimensionId), location);
 			playerMP.mcServer.getConfigurationManager().transferPlayerToDimension(playerMP, dimensionId, teleporter);
 

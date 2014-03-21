@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import openender.utils.PlayerDataManager;
+import openender.utils.PlayerDataManager.SpawnLocation;
 
 public class EntityEventHandler {
 
@@ -15,7 +17,12 @@ public class EntityEventHandler {
 			final int privateDimension = DimensionDataManager.instance.getDimensionForPlayer(player.username);
 
 			if (player.dimension == privateDimension) {
-				EnderTeleporter.teleport(player, 0, player.getBedLocation(0));
+				SpawnLocation location = PlayerDataManager.popSpawnLocation(player);
+				if (location != null) {
+					EnderTeleporter.teleport(player, location.dimensionId, location.position);
+				} else {
+					EnderTeleporter.teleport(player, 0, player.getBedLocation(0));
+				}
 				e.setCanceled(true);
 			}
 		}
