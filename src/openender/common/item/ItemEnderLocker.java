@@ -18,19 +18,19 @@ public class ItemEnderLocker extends Item {
 	}
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-
-		if (!world.isRemote && player instanceof EntityPlayerMP) {
-
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+    {
+    	if (player instanceof EntityPlayerMP) {
 			int enderId = PlayerDataUtils.getPlayerDimensionId(player);
 
 			EntityPlayerMP thePlayer = (EntityPlayerMP)player;
 
-			thePlayer.mcServer.getConfigurationManager().transferPlayerToDimension(thePlayer, enderId, new EnderTeleporter(thePlayer.mcServer.worldServerForDimension(enderId)));
-
+			EnderTeleporter teleporter = new EnderTeleporter(thePlayer.mcServer.worldServerForDimension(enderId));
+			thePlayer.mcServer.getConfigurationManager().transferPlayerToDimension(thePlayer, enderId, teleporter);
 		}
+    	
+    	return stack;
 
-		return stack;
 	}
 
 }
