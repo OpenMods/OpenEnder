@@ -1,6 +1,9 @@
 package openender.client;
 
+import openblocks.client.renderer.BlockRenderingHandler;
 import openender.IOpenEnderProxy;
+import openender.OpenEnder;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy implements IOpenEnderProxy {
 
@@ -14,6 +17,9 @@ public class ClientProxy implements IOpenEnderProxy {
 	public void postInit() {}
 
 	@Override
-	public void registerRenderInformation() {}
+	public void registerRenderInformation() {
+		OpenEnder.renderId = RenderingRegistry.getNextAvailableRenderId();
+		RenderingRegistry.registerBlockHandler(new BlockRenderingHandler());
+	}
 
 }

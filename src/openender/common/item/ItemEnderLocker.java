@@ -16,21 +16,21 @@ public class ItemEnderLocker extends Item {
 		super(Config.itemEnderLockerId);
 		setCreativeTab(OpenEnder.tabOpenEnder);
 	}
-	
+
 	@Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        
+	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+
 		if (!world.isRemote && player instanceof EntityPlayerMP) {
 
 			int enderId = PlayerDataUtils.getPlayerDimensionId(player);
-			
-		    EntityPlayerMP thePlayer = (EntityPlayerMP) player;
 
-		    thePlayer.mcServer.getConfigurationManager().transferPlayerToDimension(thePlayer, enderId, new EnderTeleporter(thePlayer.mcServer.worldServerForDimension(enderId)));
-		
+			EntityPlayerMP thePlayer = (EntityPlayerMP)player;
+
+			thePlayer.mcServer.getConfigurationManager().transferPlayerToDimension(thePlayer, enderId, new EnderTeleporter(thePlayer.mcServer.worldServerForDimension(enderId)));
+
 		}
-		
+
 		return stack;
-    }
+	}
 
 }

@@ -6,10 +6,12 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
+import openender.common.block.BlockUnbreakable;
 import openender.common.item.ItemEnderLocker;
 import openmods.OpenMods;
 import openmods.api.IProxy;
 import openmods.config.ConfigProcessing;
+import openmods.config.RegisterBlock;
 import openmods.config.RegisterItem;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -26,7 +28,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
 public class OpenEnder {
-	
 
 	@Instance(value = ModInfo.ID)
 	public static OpenEnder instance;
@@ -35,10 +36,14 @@ public class OpenEnder {
 	public static IProxy proxy;
 
 	public static class Blocks {
-		//@RegisterBlock(name = "ladder")
-		//public static BlockLadder ladder;
+
+		@RegisterBlock(name = "unbreakable")
+		public static BlockUnbreakable unbreakable;
+
+		// @RegisterBlock(name = "ladder")
+		// public static BlockLadder ladder;
 	}
-	
+
 	public static class Items {
 		@RegisterItem(name = "enderlocker")
 		public static ItemEnderLocker enderLocker;
@@ -49,8 +54,8 @@ public class OpenEnder {
 		public ItemStack getIconItemStack() {
 			return new ItemStack(ObjectUtils.firstNonNull(Block.sponge), 1, 0);
 		}
-	};	
-	
+	};
+
 	public static int renderId;
 
 	@EventHandler
@@ -67,14 +72,13 @@ public class OpenEnder {
 
 		proxy.preInit();
 	}
-	
 
 	@EventHandler
 	public void init(FMLInitializationEvent evt) {
 		proxy.init();
 		proxy.registerRenderInformation();
 	}
-	
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		proxy.postInit();
