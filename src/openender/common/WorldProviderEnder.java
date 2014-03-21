@@ -11,7 +11,7 @@ public class WorldProviderEnder extends WorldProvider {
 	}
 
 	public IChunkProvider createChunkGenerator() {
-		return new ChunkProviderEnder(worldObj, worldObj.getSeed(), false);
+		return new ChunkProviderEnder(worldObj);
 	}
 
 }
