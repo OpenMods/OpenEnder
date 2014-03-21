@@ -16,7 +16,7 @@ public class EntityEventHandler {
 			EntityPlayerMP player = (EntityPlayerMP)e.entity;
 
 			if (player.dimension == PlayerDataUtils.getPlayerDimensionId(player)) {
-				EnderTeleporter.teleport(player, 0);
+				EnderTeleporter.teleport(player, 0, player.getBedLocation(0));
 				e.setCanceled(true);
 			}
 		}
