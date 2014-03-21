@@ -94,6 +94,7 @@ public class ChunkProviderEnder implements IChunkProvider {
 	}
 
 	@Override
+	@SuppressWarnings("rawtypes")
 	public List getPossibleCreatures(EnumCreatureType enumcreaturetype, int i, int j, int k) {
 		return null;
 	}

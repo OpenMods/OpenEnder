@@ -13,9 +13,6 @@ import openmods.api.IProxy;
 import openmods.config.ConfigProcessing;
 import openmods.config.RegisterBlock;
 import openmods.config.RegisterItem;
-
-import org.apache.commons.lang3.ObjectUtils;
-
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -39,9 +36,6 @@ public class OpenEnder {
 
 		@RegisterBlock(name = "unbreakable")
 		public static BlockUnbreakable unbreakable;
-
-		// @RegisterBlock(name = "ladder")
-		// public static BlockLadder ladder;
 	}
 
 	public static class Items {
@@ -52,7 +46,7 @@ public class OpenEnder {
 	public static CreativeTabs tabOpenEnder = new CreativeTabs("tabOpenEnder") {
 		@Override
 		public ItemStack getIconItemStack() {
-			return new ItemStack(ObjectUtils.firstNonNull(Block.sponge), 1, 0);
+			return new ItemStack(Block.enderChest);
 		}
 	};
 

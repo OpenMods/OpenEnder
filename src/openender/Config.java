@@ -1,9 +1,5 @@
 package openender;
 
-import java.util.List;
-
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.DimensionManager;
 import openender.common.WorldProviderEnder;
 import openender.common.block.BlockUnbreakable;
@@ -22,11 +18,7 @@ public class Config {
 	public static int enderDimensionProviderId = 5000;
 
 	public static void register() {
-
 		DimensionManager.registerProviderType(enderDimensionProviderId, WorldProviderEnder.class, false);
-
-		@SuppressWarnings("unchecked")
-		final List<IRecipe> recipeList = CraftingManager.getInstance().getRecipeList();
 
 		OpenEnder.Blocks.unbreakable = new BlockUnbreakable();
 

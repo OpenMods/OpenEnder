@@ -1,6 +1,5 @@
 package openender.client;
 
-import openblocks.client.renderer.BlockRenderingHandler;
 import openender.IOpenEnderProxy;
 import openender.OpenEnder;
 import cpw.mods.fml.client.registry.RenderingRegistry;

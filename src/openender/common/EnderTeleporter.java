@@ -6,11 +6,8 @@ import net.minecraft.world.WorldServer;
 
 public class EnderTeleporter extends Teleporter {
 
-    private final WorldServer world;
-    
 	public EnderTeleporter(WorldServer world) {
 		super(world);
-		this.world = world;
 	}
 
 	@Override

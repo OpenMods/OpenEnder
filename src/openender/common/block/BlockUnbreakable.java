@@ -18,12 +18,11 @@ public class BlockUnbreakable extends OpenBlock {
 		setBlockUnbreakable();
 		setResistance(6000000F);
 	}
-	
-	@Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
 
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
 	@Override
 	public boolean shouldRenderBlock() {
@@ -39,7 +38,8 @@ public class BlockUnbreakable extends OpenBlock {
 	public int getRenderType() {
 		return OpenEnder.renderId;
 	}
-	
+
+	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
 		return null;
 	}
@@ -48,10 +48,10 @@ public class BlockUnbreakable extends OpenBlock {
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 vec, Vec3 vec2) {
 		return null;
 	}
-	
+
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {}
-	
+
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
 		return false;
