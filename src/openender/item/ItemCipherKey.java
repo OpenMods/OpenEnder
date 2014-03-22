@@ -40,7 +40,7 @@ public class ItemCipherKey extends Item {
 		}
 		
 		if (locked) {
-			if (ItemEnderLocker.canPlayerTeleport(world, player)) {
+			if (ItemEnderKey.canPlayerTeleport(world, player)) {
 				final int lockedWorldId = DimensionDataManager.instance.getDimensionForKey(stack);
 				if (lockedWorldId != world.provider.dimensionId) {
 					PlayerDataManager.pushSpawnLocation(player);

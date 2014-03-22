@@ -4,15 +4,15 @@ import net.minecraftforge.common.DimensionManager;
 import openender.block.BlockUnbreakable;
 import openender.common.WorldProviderEnder;
 import openender.item.ItemCipherKey;
-import openender.item.ItemEnderLocker;
+import openender.item.ItemEnderKey;
 import openmods.config.*;
 
 public class Config {
 
-	@ItemId(description = "The id of the ender locker item")
-	public static int itemEnderLockerId = 23000;
+	@ItemId(description = "The id of the ender key item")
+	public static int itemEnderKeyId = 23000;
 
-	@ItemId(description = "The id of the ender locker item")
+	@ItemId(description = "The id of the cipher key item")
 	public static int itemCipherKeyId = 23001;
 
 	@BlockId(description = "The id of the unbreakable block")
@@ -30,8 +30,8 @@ public class Config {
 
 		OpenEnder.Blocks.unbreakable = new BlockUnbreakable();
 
-		if (itemEnderLockerId > 0) {
-			OpenEnder.Items.enderLocker = new ItemEnderLocker();
+		if (itemEnderKeyId > 0) {
+			OpenEnder.Items.enderKey = new ItemEnderKey();
 		}
 		
 		if (itemCipherKeyId > 0) {

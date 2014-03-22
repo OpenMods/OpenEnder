@@ -17,10 +17,10 @@ import openender.utils.PlayerDataManager;
 import openmods.utils.Coord;
 import openmods.world.StructureRegistry;
 
-public class ItemEnderLocker extends Item {
+public class ItemEnderKey extends Item {
 
-	public ItemEnderLocker() {
-		super(Config.itemEnderLockerId);
+	public ItemEnderKey() {
+		super(Config.itemEnderKeyId);
 		setCreativeTab(OpenEnder.tabOpenEnder);
 	}
 

@@ -12,7 +12,7 @@ import openender.common.DimensionDataManager;
 import openender.common.EntityEventHandler;
 import openender.common.OpenEnderGuiHandler;
 import openender.item.ItemCipherKey;
-import openender.item.ItemEnderLocker;
+import openender.item.ItemEnderKey;
 import openmods.OpenMods;
 import openmods.api.IProxy;
 import openmods.config.ConfigProcessing;
@@ -43,7 +43,7 @@ public class OpenEnder {
 
 	public static class Items {
 		@RegisterItem(name = "enderlocker")
-		public static ItemEnderLocker enderLocker;
+		public static ItemEnderKey enderKey;
 		
 		@RegisterItem(name = "cipherkey")
 		public static ItemCipherKey cipherKey;
