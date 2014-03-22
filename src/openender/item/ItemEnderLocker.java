@@ -24,7 +24,7 @@ public class ItemEnderLocker extends Item {
 		setCreativeTab(OpenEnder.tabOpenEnder);
 	}
 
-	private static boolean canPlayerTeleport(World world, EntityPlayer player) {
+	public static boolean canPlayerTeleport(World world, EntityPlayer player) {
 		if (player instanceof EntityPlayerMP && world instanceof WorldServer) {
 			if (player.capabilities.isCreativeMode) return true;
 			Coord playerPos = new Coord(player.posX, player.posY, player.posZ);

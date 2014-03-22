@@ -2,6 +2,7 @@ package openender.common;
 
 import java.util.*;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -9,6 +10,7 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import openender.Config;
 import openmods.Log;
+import openmods.utils.ItemUtils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -33,7 +35,7 @@ public class DimensionDataManager {
 
 		private final Set<Integer> ownedDims = Sets.newHashSet();
 		private NBTTagCompound playerDims = new NBTTagCompound();
-		private Map<List<Byte>, Integer> codedDims = Maps.newHashMap();
+		private Map<NBTTagCompound, Integer> codedDims = Maps.newHashMap();
 
 		public DimensionsData(String id) {
 			super(id);
@@ -49,13 +51,13 @@ public class DimensionDataManager {
 			NBTTagList codedDims = tag.getTagList(CODED_TAG);
 			for (int i = 0; i < codedDims.tagCount(); i++) {
 				NBTTagCompound entry = (NBTTagCompound)codedDims.tagAt(i);
-				byte[] code = entry.getByteArray(CODE_TAG);
+				NBTTagCompound code = entry.getCompoundTag(CODE_TAG);
 				int dimension = entry.getInteger(DIMENSION_TAG);
 
 				if (ownedDims.contains(dimension)) {
-					this.codedDims.put(ImmutableList.copyOf(Bytes.asList(code)), dimension);
+					this.codedDims.put(code, dimension);
 				} else {
-					Log.severe("Data inconsistency: dimension %d (code %s) is not registered as ours!", dimension, Arrays.toString(code));
+					Log.severe("Data inconsistency: dimension %d (code %s) is not registered as ours!", dimension, code);
 				}
 			}
 		}
@@ -66,9 +68,9 @@ public class DimensionDataManager {
 			tag.setTag(PRIVATE_TAG, playerDims.copy());
 
 			NBTTagList codedDims = new NBTTagList();
-			for (Map.Entry<List<Byte>, Integer> e : this.codedDims.entrySet()) {
+			for (Map.Entry<NBTTagCompound, Integer> e : this.codedDims.entrySet()) {
 				NBTTagCompound entry = new NBTTagCompound();
-				entry.setByteArray(CODE_TAG, Bytes.toArray(e.getKey()));
+				entry.setCompoundTag(CODE_TAG, e.getKey());
 				entry.setInteger(DIMENSION_TAG, e.getValue());
 				codedDims.appendTag(entry);
 			}
@@ -105,15 +107,15 @@ public class DimensionDataManager {
 			return id;
 		}
 
-		public int getDimensionForCode(byte[] keyCode) {
-			List<Byte> key = ImmutableList.copyOf(Bytes.asList(keyCode));
-			Integer dimensionId = codedDims.get(key);
+		public int getDimensionForCode(NBTTagCompound keyCode) {
+			
+			Integer dimensionId = codedDims.get(keyCode);
 
 			if (dimensionId != null && isValidEnderDimension(dimensionId)) return dimensionId;
 
 			int newDimensionId = registerNewDimension();
-			Log.info("No valid dimension for code %s, registering new %d", Arrays.toString(keyCode), newDimensionId);
-			codedDims.put(key, newDimensionId);
+			Log.info("No valid dimension for code %s, registering new %d", keyCode, newDimensionId);
+			codedDims.put(keyCode, newDimensionId);
 			setDirty(true);
 			return newDimensionId;
 		}
@@ -188,9 +190,9 @@ public class DimensionDataManager {
 		return data.getDimensionForPlayer(playerName);
 	}
 
-	public int getDimensionForCode(byte[] code) {
+	public int getDimensionForKey(ItemStack key) {
 		Preconditions.checkState(data != null, "Not yet initialized");
-		return data.getDimensionForCode(code);
+		return data.getDimensionForCode(ItemUtils.getItemTag(key));
 	}
 
 }
