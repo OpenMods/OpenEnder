@@ -3,6 +3,7 @@ package openender;
 import net.minecraftforge.common.DimensionManager;
 import openender.block.BlockUnbreakable;
 import openender.common.WorldProviderEnder;
+import openender.item.ItemCipherKey;
 import openender.item.ItemEnderLocker;
 import openmods.config.*;
 
@@ -10,6 +11,9 @@ public class Config {
 
 	@ItemId(description = "The id of the ender locker item")
 	public static int itemEnderLockerId = 23000;
+
+	@ItemId(description = "The id of the ender locker item")
+	public static int itemCipherKeyId = 23001;
 
 	@BlockId(description = "The id of the unbreakable block")
 	public static int blockUnbreakableId = 3140;
@@ -28,6 +32,10 @@ public class Config {
 
 		if (itemEnderLockerId > 0) {
 			OpenEnder.Items.enderLocker = new ItemEnderLocker();
+		}
+		
+		if (itemCipherKeyId > 0) {
+			OpenEnder.Items.cipherKey = new ItemCipherKey();
 		}
 
 		final String modId = "openender";

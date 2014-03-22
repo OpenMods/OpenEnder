@@ -14,7 +14,6 @@ public class BlockUnbreakable extends OpenBlock {
 
 	public BlockUnbreakable() {
 		super(Config.blockUnbreakableId, Material.rock);
-		setCreativeTab(OpenEnder.tabOpenEnder);
 		setBlockUnbreakable();
 		setResistance(6000000F);
 	}

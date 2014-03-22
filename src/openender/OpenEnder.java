@@ -10,6 +10,8 @@ import net.minecraftforge.common.MinecraftForge;
 import openender.block.BlockUnbreakable;
 import openender.common.DimensionDataManager;
 import openender.common.EntityEventHandler;
+import openender.common.OpenEnderGuiHandler;
+import openender.item.ItemCipherKey;
 import openender.item.ItemEnderLocker;
 import openmods.OpenMods;
 import openmods.api.IProxy;
@@ -42,6 +44,9 @@ public class OpenEnder {
 	public static class Items {
 		@RegisterItem(name = "enderlocker")
 		public static ItemEnderLocker enderLocker;
+		
+		@RegisterItem(name = "cipherkey")
+		public static ItemCipherKey cipherKey;
 	}
 
 	public static CreativeTabs tabOpenEnder = new CreativeTabs("tabOpenEnder") {
@@ -63,7 +68,7 @@ public class OpenEnder {
 		if (config.hasChanged()) config.save();
 		Config.register();
 
-		NetworkRegistry.instance().registerGuiHandler(instance, OpenMods.proxy.wrapHandler(null));
+		NetworkRegistry.instance().registerGuiHandler(instance, OpenMods.proxy.wrapHandler(new OpenEnderGuiHandler()));
 
 		proxy.preInit();
 	}
