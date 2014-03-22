@@ -15,6 +15,8 @@ import net.minecraft.world.World;
 
 public class ItemCipherKey extends Item {
 
+	public static final String TAG_LOCKED = "locked";
+	
 	public ItemCipherKey() {
 		super(Config.itemCipherKeyId);
 		setCreativeTab(OpenEnder.tabOpenEnder);
@@ -22,13 +24,10 @@ public class ItemCipherKey extends Item {
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-
-		NBTTagCompound tag = ItemUtils.getItemTag(stack);
 		
-		boolean locked = tag.getBoolean("locked");
+		boolean locked = isLocked(stack);
 		
 		if (!world.isRemote) {
-			
 			if (!locked) {
 				player.openGui(
 						OpenEnder.instance,
@@ -51,6 +50,18 @@ public class ItemCipherKey extends Item {
 		}
 		
 		return stack;
+	}
+
+	public boolean isLocked(ItemStack currentItem) {
+		if (currentItem == null) return false;
+		NBTTagCompound tag = ItemUtils.getItemTag(currentItem);
+		return tag.getBoolean(TAG_LOCKED);
+	}
+	
+	public void setLocked(ItemStack currentItem) {
+		if (currentItem == null) return;
+		NBTTagCompound tag = ItemUtils.getItemTag(currentItem);
+		tag.setBoolean(TAG_LOCKED, true);
 	}
 
 }

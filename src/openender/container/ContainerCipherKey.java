@@ -6,6 +6,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import openender.OpenEnder;
+import openender.OpenEnder.Items;
 import openmods.container.ContainerBase;
 import openmods.utils.ItemUtils;
 
@@ -21,9 +23,7 @@ public class ContainerCipherKey extends ContainerBase<Void> {
 	}
 
 	public void onButtonClicked(EntityPlayer player, int buttonId) {
-		ItemStack currentItem = playerInventory.getCurrentItem();
-		NBTTagCompound tag = ItemUtils.getItemTag(currentItem);
-		tag.setBoolean("locked", true);
+		Items.cipherKey.setLocked(playerInventory.getCurrentItem());
 		player.closeScreen();
 	}
 
