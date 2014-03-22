@@ -1,6 +1,6 @@
 package openender.common;
 
-import java.util.Arrays;
+import java.util.*;
 
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
@@ -10,9 +10,12 @@ import net.minecraftforge.common.DimensionManager;
 import openender.Config;
 import openmods.Log;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Ints;
 
 public class DimensionDataManager {
 
@@ -28,9 +31,9 @@ public class DimensionDataManager {
 		private static final String DIMENSION_TAG = "Dimension";
 		private static final String CODE_TAG = "Code";
 
-		private int[] ownedDims = new int[0];
+		private final Set<Integer> ownedDims = Sets.newHashSet();
 		private NBTTagCompound playerDims = new NBTTagCompound();
-		private NBTTagList codedDims = new NBTTagList();
+		private Map<List<Byte>, Integer> codedDims = Maps.newHashMap();
 
 		public DimensionsData(String id) {
 			super(id);
@@ -38,16 +41,39 @@ public class DimensionDataManager {
 
 		@Override
 		public void readFromNBT(NBTTagCompound tag) {
-			ownedDims = tag.getIntArray(MANAGED_TAG).clone();
+			for (int dim : tag.getIntArray(MANAGED_TAG))
+				ownedDims.add(dim);
+
 			playerDims = (NBTTagCompound)tag.getCompoundTag(PRIVATE_TAG).copy();
-			codedDims = (NBTTagList)tag.getTagList(CODED_TAG).copy();
+
+			NBTTagList codedDims = tag.getTagList(CODED_TAG);
+			for (int i = 0; i < codedDims.tagCount(); i++) {
+				NBTTagCompound entry = (NBTTagCompound)codedDims.tagAt(i);
+				byte[] code = entry.getByteArray(CODE_TAG);
+				int dimension = entry.getInteger(DIMENSION_TAG);
+
+				if (ownedDims.contains(dimension)) {
+					this.codedDims.put(ImmutableList.copyOf(Bytes.asList(code)), dimension);
+				} else {
+					Log.severe("Data inconsistency: dimension %d (code %s) is not registered as ours!", dimension, Arrays.toString(code));
+				}
+			}
 		}
 
 		@Override
 		public void writeToNBT(NBTTagCompound tag) {
-			tag.setIntArray(MANAGED_TAG, ownedDims);
+			tag.setIntArray(MANAGED_TAG, Ints.toArray(ownedDims));
 			tag.setTag(PRIVATE_TAG, playerDims.copy());
-			tag.setTag(CODED_TAG, codedDims.copy());
+
+			NBTTagList codedDims = new NBTTagList();
+			for (Map.Entry<List<Byte>, Integer> e : this.codedDims.entrySet()) {
+				NBTTagCompound entry = new NBTTagCompound();
+				entry.setByteArray(CODE_TAG, Bytes.toArray(e.getKey()));
+				entry.setInteger(DIMENSION_TAG, e.getValue());
+				codedDims.appendTag(entry);
+			}
+
+			tag.setTag(CODED_TAG, codedDims);
 		}
 
 		private void registerDims() {
@@ -63,25 +89,12 @@ public class DimensionDataManager {
 		}
 
 		private void unregisterDims() {
-			for (int dim : ownedDims) {
-				if (!DimensionManager.isDimensionRegistered(dim)) {
-					Log.warn("Known dimensions %s is not registered! Possible world corruption", dim);
-					continue;
-				}
-
-				final int providerId = DimensionManager.getProviderType(dim);
-				if (providerId != Config.enderDimensionProviderId) {
-					Log.warn("Known dimension was registered with unknown provider %s! Possible world corruption", dim, providerId);
-					continue;
-				}
-
-				DimensionManager.unregisterDimension(dim);
-
-			}
+			for (int dim : ownedDims)
+				if (isValidEnderDimension(dim)) DimensionManager.unregisterDimension(dim);
 		}
 
 		private void addDimension(int id) {
-			ownedDims = ArrayUtils.add(ownedDims, id);
+			ownedDims.add(id);
 			setDirty(true);
 		}
 
@@ -92,79 +105,58 @@ public class DimensionDataManager {
 		}
 
 		public int getDimensionForCode(byte[] keyCode) {
+			List<Byte> key = ImmutableList.copyOf(Bytes.asList(keyCode));
+			Integer dimensionId = codedDims.get(key);
 
-			for (int i = 0; i < codedDims.tagCount(); i++) {
+			if (dimensionId != null && isValidEnderDimension(dimensionId)) return dimensionId;
 
-				NBTBase entry = codedDims.tagAt(i);
-
-				if (entry instanceof NBTTagCompound) {
-
-					NBTTagCompound entryTag = (NBTTagCompound)entry;
-
-					NBTBase codeEntry = entryTag.getTag(CODE_TAG);
-					NBTBase dimensionEntry = entryTag.getTag(DIMENSION_TAG);
-
-					if (codeEntry instanceof NBTTagInt &&
-							dimensionEntry instanceof NBTTagByteArray) {
-
-						byte[] code = ((NBTTagByteArray)codeEntry).byteArray;
-
-						if (Arrays.equals(code, keyCode)) {
-
-							final int dimensionId = ((NBTTagInt)dimensionEntry).data;
-
-							ensureDimensionIsRegistered(dimensionId);
-
-							return dimensionId;
-						}
-					}
-				}
-			}
-
-			return createDimensionForCode(keyCode);
-		}
-
-		private int createDimensionForCode(byte[] keyCode) {
-			final int dimensionId = registerNewDimension();
-
-			NBTTagCompound entry = new NBTTagCompound();
-			entry.setInteger(DIMENSION_TAG, dimensionId);
-			entry.setByteArray(CODE_TAG, keyCode);
-			codedDims.appendTag(entry);
-
+			int newDimensionId = registerNewDimension();
+			Log.info("No valid dimension for code %s, registering new %d", Arrays.toString(keyCode), newDimensionId);
+			codedDims.put(key, newDimensionId);
 			setDirty(true);
-			ensureDimensionIsRegistered(dimensionId);
-
-			return dimensionId;
+			return newDimensionId;
 		}
 
 		public int getDimensionForPlayer(String playerName) {
 			NBTBase entry = playerDims.getTag(playerName);
 
-			final int dimensionId;
 			if (entry instanceof NBTTagInt) {
-				dimensionId = ((NBTTagInt)entry).data;
-			} else {
-				dimensionId = registerNewDimension();
-				playerDims.setInteger(playerName, dimensionId);
-				setDirty(true);
+				int dimensionId = ((NBTTagInt)entry).data;
+				if (isValidEnderDimension(dimensionId)) return dimensionId;
 			}
 
-			ensureDimensionIsRegistered(dimensionId);
-
-			return dimensionId;
+			int newDimensionId = registerNewDimension();
+			Log.info("No valid dimension for player %s, registering new %d", playerName, newDimensionId);
+			playerDims.setInteger(playerName, newDimensionId);
+			setDirty(true);
+			return newDimensionId;
 		}
 
-		private void ensureDimensionIsRegistered(int dimensionId) {
+		private boolean isValidEnderDimension(int dimensionId) {
 			if (!DimensionManager.isDimensionRegistered(dimensionId)) {
-				DimensionManager.registerDimension(dimensionId, Config.enderDimensionProviderId);
+				Log.warn("Known dimensions %s is not registered! Possible world corruption", dimensionId);
+				return false;
 			}
+
+			final int providerId = DimensionManager.getProviderType(dimensionId);
+			if (providerId != Config.enderDimensionProviderId) {
+				Log.warn("Known dimension was registered with unknown provider %s! Possible world corruption", dimensionId, providerId);
+				return false;
+			}
+
+			if (!ownedDims.contains(dimensionId)) {
+				Log.warn("Dimension %d was registered with our provider, but not in owned list! Possible world corruption", dimensionId);
+				addDimension(dimensionId);
+				// still valid situation, returning true
+			}
+
+			return true;
 		}
 	}
 
 	private DimensionsData data;
 
-	public void registerAllDimensions(MinecraftServer srv) {
+	public void onServerStart(MinecraftServer srv) {
 		final World overworld = srv.worldServerForDimension(0);
 		DimensionsData newData = (DimensionsData)overworld.loadItemData(DimensionsData.class, DIMENSION_ID);
 
@@ -178,9 +170,11 @@ public class DimensionDataManager {
 		data = newData;
 	}
 
-	public void unregisterAllDimensions() {
+	public void onServerStop() {
 		if (data == null) Log.warn("Server not loaded");
 		else data.unregisterDims();
+
+		data = null;
 	}
 
 	public int getNewDimensionId() {
