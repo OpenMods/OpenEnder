@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import openender.Config;
 import openender.OpenEnder;
 import openender.common.DimensionDataManager;
@@ -27,6 +28,10 @@ public class ItemEnderKey extends Item {
 	public static boolean canPlayerTeleport(World world, EntityPlayer player) {
 		if (player instanceof EntityPlayerMP && world instanceof WorldServer) {
 			if (player.capabilities.isCreativeMode) return true;
+
+			int currentProvider = DimensionManager.getProviderType(world.provider.dimensionId);
+			if (currentProvider == Config.enderDimensionProviderId) return true;
+			
 			Coord playerPos = new Coord(player.posX, player.posY, player.posZ);
 			Set<ChunkPosition> coords = StructureRegistry.instance.getNearestInstance("Temple", (WorldServer)world, playerPos.x, playerPos.y, playerPos.z);
 

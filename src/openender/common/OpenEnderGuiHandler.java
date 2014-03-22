@@ -1,6 +1,7 @@
 package openender.common;
 
 import openblocks.OpenBlocksGuiHandler.GuiId;
+import openender.OpenEnder;
 import openender.container.ContainerCipherKey;
 import openender.gui.GuiCipherKey;
 import openmods.GenericInventory;
@@ -31,33 +32,14 @@ public class OpenEnderGuiHandler implements IGuiHandler {
 	}
 	
 	@Override
-	public Object getServerGuiElement(int id, EntityPlayer _player, World world, int x, int y, int z) {
+	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
 		final GuiId guiId = getGuiId(id);
 		if (guiId == null) return null;
 		
 		switch (guiId) {
 			case cipherKey:
-				
-				final int slot = x;
-				final EntityPlayer player = _player;
-				
-				final ItemStack stack = player.inventory.getStackInSlot(x);
-				
-				final GenericInventory inventory = new GenericInventory("", false, 6);
-				final NBTTagCompound tag = ItemUtils.getItemTag(stack);
-				
-				inventory.readFromNBT(tag);
-				
-				inventory.addCallback(new IInventoryCallback() {
-					@Override
-					public void onInventoryChanged(IInventory inv, int slotNumber) {
-						inventory.writeToNBT(tag);
-						stack.setTagCompound(tag);
-						player.inventory.setInventorySlotContents(slot, stack);
-					}
-				});
-				
+				IInventory inventory = OpenEnder.Items.cipherKey.getItemInventory(player);
 				return new ContainerCipherKey(player.inventory, inventory);
 			default:
 				return null;

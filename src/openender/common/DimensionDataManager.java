@@ -55,7 +55,7 @@ public class DimensionDataManager {
 				int dimension = entry.getInteger(DIMENSION_TAG);
 
 				if (ownedDims.contains(dimension)) {
-					this.codedDims.put(code, dimension);
+					this.codedDims.put((NBTTagCompound)code.copy(), dimension);
 				} else {
 					Log.severe("Data inconsistency: dimension %d (code %s) is not registered as ours!", dimension, code);
 				}
@@ -109,13 +109,16 @@ public class DimensionDataManager {
 
 		public int getDimensionForCode(NBTTagCompound keyCode) {
 			
+			/**
+			 * This does not work. Can't use NBT tag as a hash key. fail fail.
+			 */			
 			Integer dimensionId = codedDims.get(keyCode);
 
 			if (dimensionId != null && isValidEnderDimension(dimensionId)) return dimensionId;
 
 			int newDimensionId = registerNewDimension();
 			Log.info("No valid dimension for code %s, registering new %d", keyCode, newDimensionId);
-			codedDims.put(keyCode, newDimensionId);
+			codedDims.put((NBTTagCompound)keyCode.copy(), newDimensionId);
 			setDirty(true);
 			return newDimensionId;
 		}
@@ -190,9 +193,10 @@ public class DimensionDataManager {
 		return data.getDimensionForPlayer(playerName);
 	}
 
-	public int getDimensionForKey(ItemStack key) {
+	public int getDimensionForKey(NBTTagCompound key) {
 		Preconditions.checkState(data != null, "Not yet initialized");
-		return data.getDimensionForCode(ItemUtils.getItemTag(key));
+		System.out.println(key);
+		return data.getDimensionForCode(key);
 	}
 
 }
