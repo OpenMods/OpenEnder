@@ -33,7 +33,7 @@ public class Config {
 		if (itemEnderKeyId > 0) {
 			OpenEnder.Items.enderKey = new ItemEnderKey();
 		}
-		
+
 		if (itemCipherKeyId > 0) {
 			OpenEnder.Items.cipherKey = new ItemCipherKey();
 		}

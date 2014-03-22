@@ -44,7 +44,7 @@ public class OpenEnder {
 	public static class Items {
 		@RegisterItem(name = "enderlocker")
 		public static ItemEnderKey enderKey;
-		
+
 		@RegisterItem(name = "cipherkey")
 		public static ItemCipherKey cipherKey;
 	}

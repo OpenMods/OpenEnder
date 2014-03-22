@@ -1,6 +1,5 @@
 package openender.gui;
 
-import net.minecraft.item.Item;
 import openender.container.ContainerCipherKey;
 import openmods.gui.BaseGuiContainer;
 import openmods.gui.component.BaseComponent;
@@ -10,7 +9,7 @@ import openmods.gui.component.IComponentListener;
 public class GuiCipherKey extends BaseGuiContainer<ContainerCipherKey> implements IComponentListener {
 
 	private GuiComponentTextButton buttonLock;
-	
+
 	public GuiCipherKey(ContainerCipherKey container) {
 		super(container, 176, 167, "openblocks.gui.blockplacer");
 		root.addComponent((buttonLock = new GuiComponentTextButton(68, 57, 40, 13, 0xFFFFFF))

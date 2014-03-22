@@ -1,8 +1,8 @@
 package openender.common;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -10,13 +10,10 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import openender.Config;
 import openmods.Log;
-import openmods.utils.ItemUtils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Ints;
 
 public class DimensionDataManager {
@@ -108,10 +105,13 @@ public class DimensionDataManager {
 		}
 
 		public int getDimensionForCode(NBTTagCompound keyCode) {
-			
-			/**
-			 * This does not work. Can't use NBT tag as a hash key. fail fail.
-			 */			
+
+			// need to ensure names match
+			if (keyCode != null) {
+				keyCode = (NBTTagCompound)keyCode.copy();
+				keyCode.setName(CODE_TAG);
+			}
+
 			Integer dimensionId = codedDims.get(keyCode);
 
 			if (dimensionId != null && isValidEnderDimension(dimensionId)) return dimensionId;
@@ -195,7 +195,6 @@ public class DimensionDataManager {
 
 	public int getDimensionForKey(NBTTagCompound key) {
 		Preconditions.checkState(data != null, "Not yet initialized");
-		System.out.println(key);
 		return data.getDimensionForCode(key);
 	}
 

@@ -31,7 +31,7 @@ public class ItemEnderKey extends Item {
 
 			int currentProvider = DimensionManager.getProviderType(world.provider.dimensionId);
 			if (currentProvider == Config.enderDimensionProviderId) return true;
-			
+
 			Coord playerPos = new Coord(player.posX, player.posY, player.posZ);
 			Set<ChunkPosition> coords = StructureRegistry.instance.getNearestInstance("Temple", (WorldServer)world, playerPos.x, playerPos.y, playerPos.z);
 
