@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import openender.Config;
+import openmods.Log;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -50,8 +51,33 @@ public class DimensionDataManager {
 		}
 
 		private void registerDims() {
-			for (int dim : ownedDims)
-				DimensionManager.registerDimension(dim, Config.enderDimensionProviderId);
+			for (int dim : ownedDims) {
+				if (DimensionManager.isDimensionRegistered(dim)) {
+					int currentProvider = DimensionManager.getProviderType(dim);
+					if (currentProvider != Config.enderDimensionProviderId) {
+						Log.severe("Dimension %s is marked as OpenEnder world,  but is already registered with different provider %d. Strange things may happen",
+								dim, currentProvider);
+					}
+				} else DimensionManager.registerDimension(dim, Config.enderDimensionProviderId);
+			}
+		}
+
+		private void unregisterDims() {
+			for (int dim : ownedDims) {
+				if (!DimensionManager.isDimensionRegistered(dim)) {
+					Log.warn("Known dimensions %s is not registered! Possible world corruption", dim);
+					continue;
+				}
+
+				final int providerId = DimensionManager.getProviderType(dim);
+				if (providerId != Config.enderDimensionProviderId) {
+					Log.warn("Known dimension was registered with unknown provider %s! Possible world corruption", dim, providerId);
+					continue;
+				}
+
+				DimensionManager.unregisterDimension(dim);
+
+			}
 		}
 
 		private void addDimension(int id) {
@@ -138,7 +164,7 @@ public class DimensionDataManager {
 
 	private DimensionsData data;
 
-	public void registerDimensions(MinecraftServer srv) {
+	public void registerAllDimensions(MinecraftServer srv) {
 		final World overworld = srv.worldServerForDimension(0);
 		DimensionsData newData = (DimensionsData)overworld.loadItemData(DimensionsData.class, DIMENSION_ID);
 
@@ -152,13 +178,18 @@ public class DimensionDataManager {
 		data = newData;
 	}
 
+	public void unregisterAllDimensions() {
+		if (data == null) Log.warn("Server not loaded");
+		else data.unregisterDims();
+	}
+
 	public int getNewDimensionId() {
-		Preconditions.checkState(data != null, "Not yet initialized");
+		Preconditions.checkState(data != null, "Server not loaded");
 		return data.registerNewDimension();
 	}
 
 	public int getDimensionForPlayer(String playerName) {
-		Preconditions.checkState(data != null, "Not yet initialized");
+		Preconditions.checkState(data != null, "Server not loaded");
 		return data.getDimensionForPlayer(playerName);
 	}
 

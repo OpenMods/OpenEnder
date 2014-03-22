@@ -84,6 +84,16 @@ public class OpenEnder {
 
 	@EventHandler
 	public void onServerStart(FMLServerStartingEvent evt) {
-		DimensionDataManager.instance.registerDimensions(evt.getServer());
+		DimensionDataManager.instance.registerAllDimensions(evt.getServer());
+	}
+
+	@EventHandler
+	public void onServerStop(FMLServerStartingEvent evt) {
+		DimensionDataManager.instance.registerAllDimensions(evt.getServer());
+	}
+
+	@EventHandler
+	public void onServerStop(FMLServerStoppedEvent evt) {
+		DimensionDataManager.instance.unregisterAllDimensions();
 	}
 }
