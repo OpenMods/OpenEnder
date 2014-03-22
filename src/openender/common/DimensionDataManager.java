@@ -1,8 +1,8 @@
 package openender.common;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
+import java.util.Arrays;
+
+import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
@@ -23,9 +23,13 @@ public class DimensionDataManager {
 
 		private static final String MANAGED_TAG = "AllDimensions";
 		private static final String PRIVATE_TAG = "PrivateDimensions";
+		private static final String CODED_TAG = "CodedDimensions";
+		private static final String DIMENSION_TAG = "Dimension";
+		private static final String CODE_TAG = "Code";
 
 		private int[] ownedDims = new int[0];
 		private NBTTagCompound playerDims = new NBTTagCompound();
+		private NBTTagList codedDims = new NBTTagList();
 
 		public DimensionsData(String id) {
 			super(id);
@@ -35,12 +39,14 @@ public class DimensionDataManager {
 		public void readFromNBT(NBTTagCompound tag) {
 			ownedDims = tag.getIntArray(MANAGED_TAG).clone();
 			playerDims = (NBTTagCompound)tag.getCompoundTag(PRIVATE_TAG).copy();
+			codedDims = (NBTTagList)tag.getTagList(CODED_TAG).copy();
 		}
 
 		@Override
 		public void writeToNBT(NBTTagCompound tag) {
 			tag.setIntArray(MANAGED_TAG, ownedDims);
 			tag.setTag(PRIVATE_TAG, playerDims.copy());
+			tag.setTag(CODED_TAG, codedDims.copy());
 		}
 
 		private void registerDims() {
@@ -59,24 +65,74 @@ public class DimensionDataManager {
 			return id;
 		}
 
+		public int getDimensionForCode(byte[] keyCode) {
+
+			for (int i = 0; i < codedDims.tagCount(); i++) {
+
+				NBTBase entry = codedDims.tagAt(i);
+
+				if (entry instanceof NBTTagCompound) {
+
+					NBTTagCompound entryTag = (NBTTagCompound)entry;
+
+					NBTBase codeEntry = entryTag.getTag(CODE_TAG);
+					NBTBase dimensionEntry = entryTag.getTag(DIMENSION_TAG);
+
+					if (codeEntry instanceof NBTTagInt &&
+							dimensionEntry instanceof NBTTagByteArray) {
+
+						byte[] code = ((NBTTagByteArray)codeEntry).byteArray;
+
+						if (Arrays.equals(code, keyCode)) {
+
+							final int dimensionId = ((NBTTagInt)dimensionEntry).data;
+
+							ensureDimensionIsRegistered(dimensionId);
+
+							return dimensionId;
+						}
+					}
+				}
+			}
+
+			return createDimensionForCode(keyCode);
+		}
+
+		private int createDimensionForCode(byte[] keyCode) {
+			final int dimensionId = registerNewDimension();
+
+			NBTTagCompound entry = new NBTTagCompound();
+			entry.setInteger(DIMENSION_TAG, dimensionId);
+			entry.setByteArray(CODE_TAG, keyCode);
+			codedDims.appendTag(entry);
+
+			setDirty(true);
+			ensureDimensionIsRegistered(dimensionId);
+
+			return dimensionId;
+		}
+
 		public int getDimensionForPlayer(String playerName) {
 			NBTBase entry = playerDims.getTag(playerName);
 
 			final int dimensionId;
 			if (entry instanceof NBTTagInt) {
 				dimensionId = ((NBTTagInt)entry).data;
-			}
-			else {
+			} else {
 				dimensionId = registerNewDimension();
 				playerDims.setInteger(playerName, dimensionId);
 				setDirty(true);
 			}
 
+			ensureDimensionIsRegistered(dimensionId);
+
+			return dimensionId;
+		}
+
+		private void ensureDimensionIsRegistered(int dimensionId) {
 			if (!DimensionManager.isDimensionRegistered(dimensionId)) {
 				DimensionManager.registerDimension(dimensionId, Config.enderDimensionProviderId);
 			}
-
-			return dimensionId;
 		}
 	}
 
@@ -104,6 +160,11 @@ public class DimensionDataManager {
 	public int getDimensionForPlayer(String playerName) {
 		Preconditions.checkState(data != null, "Not yet initialized");
 		return data.getDimensionForPlayer(playerName);
+	}
+
+	public int getDimensionForCode(byte[] code) {
+		Preconditions.checkState(data != null, "Not yet initialized");
+		return data.getDimensionForCode(code);
 	}
 
 }
