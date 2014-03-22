@@ -100,6 +100,7 @@ public class DimensionDataManager {
 
 		public int registerNewDimension() {
 			int id = DimensionManager.getNextFreeDimId();
+			DimensionManager.registerDimension(id, Config.enderDimensionProviderId);
 			addDimension(id);
 			return id;
 		}
