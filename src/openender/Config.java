@@ -5,6 +5,7 @@ import openender.block.BlockUnbreakable;
 import openender.common.WorldProviderEnder;
 import openender.item.ItemCipherKey;
 import openender.item.ItemEnderKey;
+import openender.item.ItemGuide;
 import openmods.config.*;
 
 public class Config {
@@ -14,6 +15,9 @@ public class Config {
 
 	@ItemId(description = "The id of the cipher key item")
 	public static int itemCipherKeyId = 23001;
+
+	@ItemId(description = "The id of the guide item")
+	public static int itemGuideId = 23002;
 
 	@BlockId(description = "The id of the unbreakable block")
 	public static int blockUnbreakableId = 3140;
@@ -36,6 +40,10 @@ public class Config {
 
 		if (itemCipherKeyId > 0) {
 			OpenEnder.Items.cipherKey = new ItemCipherKey();
+		}
+
+		if (itemGuideId > 0) {
+			OpenEnder.Items.guide = new ItemGuide();
 		}
 
 		final String modId = "openender";

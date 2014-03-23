@@ -1,0 +1,13 @@
+tile.openender.unbreakable.name=Unbreakable
+
+item.openender.enderstone.name=Ender Stone
+item.openender.enderstone.name=Cipher Stone
+
+openender.gui.welcome.title=So what's this OpenEnder?
+openender.gui.welcome.content=OpenEnder is a mod built to allow players on PVP based servers to have a little bit of sanctuary to keep their important things without needing to rebuild whenver they are raided.\n\nHowever, we offer limited space at a premium.
+
+item.openender.enderdimension.name=Ender Dimension
+item.openender.enderdimension.description=The ender dimension works just like an ender chest - it's a dimension that only you have access to. To access your ender dimension you need to activate an Ender Stone at a temple. To leave the dimension just jump into the void and you'll end back at the temple.
+
+item.openender.lockeddimensions.name=Locked Dimensions
+item.openender.lockeddimensions.description=Locked dimensions are similar to ender dimensions, however instead of it being only accessible by you, they can be accessed by anyone using the correct key.

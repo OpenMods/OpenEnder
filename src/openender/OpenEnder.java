@@ -13,6 +13,7 @@ import openender.common.EntityEventHandler;
 import openender.common.OpenEnderGuiHandler;
 import openender.item.ItemCipherKey;
 import openender.item.ItemEnderKey;
+import openender.item.ItemGuide;
 import openmods.OpenMods;
 import openmods.api.IProxy;
 import openmods.config.ConfigProcessing;
@@ -47,6 +48,9 @@ public class OpenEnder {
 
 		@RegisterItem(name = "cipherkey")
 		public static ItemCipherKey cipherKey;
+
+		@RegisterItem(name = "guide")
+		public static ItemGuide guide;
 	}
 
 	public static CreativeTabs tabOpenEnder = new CreativeTabs("tabOpenEnder") {

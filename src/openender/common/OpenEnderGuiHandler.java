@@ -6,13 +6,15 @@ import net.minecraft.world.World;
 import openender.OpenEnder;
 import openender.container.ContainerCipherKey;
 import openender.gui.GuiCipherKey;
+import openender.gui.GuiGuide;
 import openmods.Log;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class OpenEnderGuiHandler implements IGuiHandler {
 
 	public static enum GuiId {
-		cipherKey;
+		cipherKey,
+		guide;
 		public static final GuiId[] VALUES = GuiId.values();
 	}
 
@@ -49,6 +51,8 @@ public class OpenEnderGuiHandler implements IGuiHandler {
 		switch (guiId) {
 			case cipherKey:
 				return new GuiCipherKey((ContainerCipherKey)getServerGuiElement(id, player, world, x, y, z));
+			case guide:
+				return new GuiGuide();
 			default:
 				return null;
 		}

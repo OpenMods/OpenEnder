@@ -2,9 +2,6 @@ package openender.item;
 
 import java.util.Set;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +19,8 @@ import openender.common.EnderTeleporter;
 import openender.utils.PlayerDataManager;
 import openmods.utils.Coord;
 import openmods.world.StructureRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemEnderKey extends Item {
 
@@ -66,14 +65,13 @@ public class ItemEnderKey extends Item {
 		return stack;
 
 	}
-	
-	@Override
-    public void onUpdate(ItemStack stack, World world, Entity entity, int par4, boolean held) {
-    	if (world.isRemote && held) {
-    		world.spawnParticle("portal", entity.posX, entity.posY, entity.posZ, (world.rand.nextDouble() - 0.5) * 2, world.rand.nextDouble() - 1.0, (world.rand.nextDouble() - 0.5) * 2);
-    	}
-    }
 
+	@Override
+	public void onUpdate(ItemStack stack, World world, Entity entity, int par4, boolean held) {
+		if (world.isRemote && held) {
+			world.spawnParticle("portal", entity.posX, entity.posY, entity.posZ, (world.rand.nextDouble() - 0.5) * 2, world.rand.nextDouble() - 1.0, (world.rand.nextDouble() - 0.5) * 2);
+		}
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
