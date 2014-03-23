@@ -11,9 +11,11 @@ import openender.block.BlockUnbreakable;
 import openender.common.DimensionDataManager;
 import openender.common.EntityEventHandler;
 import openender.common.OpenEnderGuiHandler;
+import openender.integration.MystcraftEventHandler;
 import openender.item.ItemCipherStone;
 import openender.item.ItemEnderStone;
 import openender.item.ItemGuide;
+import openmods.Mods;
 import openmods.OpenMods;
 import openmods.api.IProxy;
 import openmods.config.ConfigProcessing;
@@ -82,6 +84,10 @@ public class OpenEnder {
 
 		MinecraftForge.EVENT_BUS.register(new EntityEventHandler());
 
+		if (Loader.isModLoaded(Mods.MYSTCRAFT)) {
+			MinecraftForge.EVENT_BUS.register(new MystcraftEventHandler());
+		}
+		
 		proxy.init();
 		proxy.registerRenderInformation();
 	}

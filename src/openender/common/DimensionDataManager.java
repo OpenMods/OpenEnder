@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import openender.Config;
+import openender.utils.WorldUtils;
 import openmods.Log;
 
 import com.google.common.base.Preconditions;
@@ -78,10 +79,9 @@ public class DimensionDataManager {
 		private void registerDims() {
 			for (int dim : ownedDims) {
 				if (DimensionManager.isDimensionRegistered(dim)) {
-					int currentProvider = DimensionManager.getProviderType(dim);
-					if (currentProvider != Config.enderDimensionProviderId) {
-						Log.severe("Dimension %s is marked as OpenEnder world,  but is already registered with different provider %d. Strange things may happen",
-								dim, currentProvider);
+					if (!WorldUtils.isEnderDimension(dim)) {
+						Log.severe("Dimension %s is marked as OpenEnder world,  but is already registered with different provider. Strange things may happen",
+								dim);
 					}
 				} else DimensionManager.registerDimension(dim, Config.enderDimensionProviderId);
 			}
@@ -144,9 +144,8 @@ public class DimensionDataManager {
 				return false;
 			}
 
-			final int providerId = DimensionManager.getProviderType(dimensionId);
-			if (providerId != Config.enderDimensionProviderId) {
-				Log.warn("Known dimension was registered with unknown provider %s! Possible world corruption", dimensionId, providerId);
+			if (!WorldUtils.isEnderDimension(dimensionId)) {
+				Log.warn("Known dimension was registered with unknown provider! Possible world corruption", dimensionId);
 				return false;
 			}
 
