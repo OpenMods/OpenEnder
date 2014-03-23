@@ -1,8 +1,10 @@
 package openender.common;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -123,6 +125,19 @@ public class DimensionDataManager {
 			return newDimensionId;
 		}
 
+		public String getDimensionOwner(int dimensionId) {
+
+			Collection<NBTBase> entries = playerDims.getTags();
+			for (NBTBase entry : entries) {
+				if (entry instanceof NBTTagInt) {
+					int dimId = ((NBTTagInt)entry).data;
+					if (dimId == dimensionId) return entry.getName();
+				}
+			}
+
+			return null;
+		}
+
 		public int getDimensionForPlayer(String playerName) {
 			NBTBase entry = playerDims.getTag(playerName);
 
@@ -195,6 +210,11 @@ public class DimensionDataManager {
 	public int getDimensionForKey(NBTTagCompound key) {
 		Preconditions.checkState(data != null, "Not yet initialized");
 		return data.getDimensionForCode(key);
+	}
+
+	public String getDimensionOwner(int dimensionId) {
+		Preconditions.checkState(data != null, "Not yet initialized");
+		return data.getDimensionOwner(dimensionId);
 	}
 
 }
