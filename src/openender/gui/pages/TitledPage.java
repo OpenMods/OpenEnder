@@ -8,7 +8,6 @@ package openender.gui.pages;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.StatCollector;
-import openblocks.client.gui.pages.BlankPage;
 import openmods.gui.component.GuiComponentLabel;
 import openmods.utils.StringUtils;
 
