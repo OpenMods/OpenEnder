@@ -4,7 +4,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import openender.item.ItemGuide;
 import openender.utils.PlayerDataManager;
 import openender.utils.PlayerDataManager.SpawnLocation;
 
@@ -35,5 +37,10 @@ public class EntityEventHandler {
 
 			}
 		}
+	}
+
+	@ForgeSubscribe
+	public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+		ItemGuide.giveGuideIfRequired(event.entity);
 	}
 }

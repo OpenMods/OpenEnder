@@ -35,7 +35,7 @@ public class OpenEnderGuiHandler implements IGuiHandler {
 
 		switch (guiId) {
 			case cipherKey:
-				IInventory inventory = OpenEnder.Items.cipherKey.getItemInventory(player);
+				IInventory inventory = OpenEnder.Items.cipherStone.getItemInventory(player);
 				return new ContainerCipherKey(player.inventory, inventory);
 			default:
 				return null;

@@ -11,8 +11,8 @@ import openender.block.BlockUnbreakable;
 import openender.common.DimensionDataManager;
 import openender.common.EntityEventHandler;
 import openender.common.OpenEnderGuiHandler;
-import openender.item.ItemCipherKey;
-import openender.item.ItemEnderKey;
+import openender.item.ItemCipherStone;
+import openender.item.ItemEnderStone;
 import openender.item.ItemGuide;
 import openmods.OpenMods;
 import openmods.api.IProxy;
@@ -44,10 +44,10 @@ public class OpenEnder {
 
 	public static class Items {
 		@RegisterItem(name = "enderstone")
-		public static ItemEnderKey enderKey;
+		public static ItemEnderStone enderStone;
 
-		@RegisterItem(name = "cipherkey")
-		public static ItemCipherKey cipherKey;
+		@RegisterItem(name = "cipherstone")
+		public static ItemCipherStone cipherStone;
 
 		@RegisterItem(name = "guide")
 		public static ItemGuide guide;

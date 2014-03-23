@@ -1,7 +1,8 @@
 tile.openender.unbreakable.name=Unbreakable
 
 item.openender.enderstone.name=Ender Stone
-item.openender.enderstone.name=Cipher Stone
+item.openender.cipherstone.name=Cipher Stone
+item.openender.guide.name=OpenEnder Guide
 
 openender.gui.welcome.title=So what's this OpenEnder?
 openender.gui.welcome.content=OpenEnder is a mod built to allow players on PVP based servers to have a little bit of sanctuary to keep their important things without needing to rebuild whenver they are raided.\n\nHowever, we offer limited space at a premium.

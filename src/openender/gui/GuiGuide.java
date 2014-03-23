@@ -27,8 +27,8 @@ public class GuiGuide extends GuiScreen {
 		book.addPage(new BlankPage());
 		book.addPage(new BlankPage());
 		book.addPage(new TitledPage("openender.gui.welcome.title", "openender.gui.welcome.content"));
-		book.addStandardRecipePage("openender", "enderdimension", Items.enderKey);
-		book.addStandardRecipePage("openender", "lockeddimensions", Items.cipherKey);
+		book.addStandardRecipePage("openender", "enderdimension", Items.enderStone);
+		book.addStandardRecipePage("openender", "lockeddimensions", Items.cipherStone);
 		book.enablePages();
 	}
 

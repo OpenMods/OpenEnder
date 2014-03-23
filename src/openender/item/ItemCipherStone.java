@@ -1,5 +1,6 @@
 package openender.item;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -15,14 +16,16 @@ import openender.utils.PlayerDataManager;
 import openmods.GenericInventory;
 import openmods.api.IInventoryCallback;
 import openmods.utils.ItemUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemCipherKey extends Item {
+public class ItemCipherStone extends Item {
 
 	public static final String TAG_LOCKED = "locked";
 	public static final String TAG_INVENTORY = "inventory";
 
-	public ItemCipherKey() {
-		super(Config.itemCipherKeyId);
+	public ItemCipherStone() {
+		super(Config.itemCipherStoneId);
 		setCreativeTab(OpenEnder.tabOpenEnder);
 	}
 
@@ -44,7 +47,7 @@ public class ItemCipherKey extends Item {
 		}
 
 		if (locked) {
-			if (ItemEnderKey.canPlayerTeleport(world, player)) {
+			if (ItemEnderStone.canPlayerTeleport(world, player)) {
 				NBTTagCompound inventoryTag = getInventoryTag(stack);
 				final int lockedWorldId = DimensionDataManager.instance.getDimensionForKey(inventoryTag);
 				if (lockedWorldId != world.provider.dimensionId) {
@@ -97,6 +100,12 @@ public class ItemCipherKey extends Item {
 		});
 
 		return inventory;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister registry) {
+		itemIcon = registry.registerIcon("openender:cipherstone");
 	}
 
 }

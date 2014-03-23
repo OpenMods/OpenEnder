@@ -18,7 +18,7 @@ public class ContainerCipherKey extends ContainerBase<Void> {
 	}
 
 	public void onButtonClicked(EntityPlayer player, int buttonId) {
-		Items.cipherKey.setLocked(playerInventory.getCurrentItem());
+		Items.cipherStone.setLocked(playerInventory.getCurrentItem());
 		player.closeScreen();
 	}
 

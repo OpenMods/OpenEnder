@@ -22,10 +22,10 @@ import openmods.world.StructureRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemEnderKey extends Item {
+public class ItemEnderStone extends Item {
 
-	public ItemEnderKey() {
-		super(Config.itemEnderKeyId);
+	public ItemEnderStone() {
+		super(Config.itemEnderStoneId);
 		setCreativeTab(OpenEnder.tabOpenEnder);
 	}
 
@@ -39,7 +39,7 @@ public class ItemEnderKey extends Item {
 			Coord playerPos = new Coord(player.posX, player.posY, player.posZ);
 			Set<ChunkPosition> coords = StructureRegistry.instance.getNearestInstance("Temple", (WorldServer)world, playerPos.x, playerPos.y, playerPos.z);
 
-			final int rangeSq = Config.keyRange * Config.keyRange;
+			final int rangeSq = Config.stoneRange * Config.stoneRange;
 
 			for (ChunkPosition chunkPos : coords) {
 				Coord tmp = new Coord(chunkPos);
