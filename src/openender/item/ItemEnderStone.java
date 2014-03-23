@@ -17,6 +17,7 @@ import openender.OpenEnder;
 import openender.common.DimensionDataManager;
 import openender.common.EnderTeleporter;
 import openender.utils.PlayerDataManager;
+import openender.utils.WorldUtils;
 import openmods.utils.Coord;
 import openmods.world.StructureRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -58,6 +59,7 @@ public class ItemEnderStone extends Item {
 			final int privateWorldId = DimensionDataManager.instance.getDimensionForPlayer(player.username);
 			if (privateWorldId != world.provider.dimensionId) {
 				PlayerDataManager.pushSpawnLocation(player);
+				WorldUtils.strikeAreaAroundPlayer(world, player, 10, 2);
 				EnderTeleporter.teleport(player, privateWorldId);
 			}
 		}

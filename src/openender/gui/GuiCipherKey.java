@@ -11,7 +11,7 @@ public class GuiCipherKey extends BaseGuiContainer<ContainerCipherKey> implement
 	private GuiComponentTextButton buttonLock;
 
 	public GuiCipherKey(ContainerCipherKey container) {
-		super(container, 176, 167, "openblocks.gui.blockplacer");
+		super(container, 176, 167, "item.openender.cipherstone.name");
 		root.addComponent((buttonLock = new GuiComponentTextButton(68, 57, 40, 13, 0xFFFFFF))
 				.setText("Lock")
 				.setName("btnLock")

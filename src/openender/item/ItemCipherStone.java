@@ -13,6 +13,7 @@ import openender.common.DimensionDataManager;
 import openender.common.EnderTeleporter;
 import openender.common.OpenEnderGuiHandler;
 import openender.utils.PlayerDataManager;
+import openender.utils.WorldUtils;
 import openmods.GenericInventory;
 import openmods.api.IInventoryCallback;
 import openmods.utils.ItemUtils;
@@ -52,6 +53,7 @@ public class ItemCipherStone extends Item {
 				final int lockedWorldId = DimensionDataManager.instance.getDimensionForKey(inventoryTag);
 				if (lockedWorldId != world.provider.dimensionId) {
 					PlayerDataManager.pushSpawnLocation(player);
+					WorldUtils.strikeAreaAroundPlayer(world, player, 10, 2);
 					EnderTeleporter.teleport(player, lockedWorldId);
 				}
 			}

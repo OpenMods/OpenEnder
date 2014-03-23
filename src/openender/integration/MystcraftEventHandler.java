@@ -9,11 +9,11 @@ public class MystcraftEventHandler {
 
 	@ForgeSubscribe
 	public void onLinkEventAllow(LinkEventAllow evt) {
-				
+
 		if (WorldUtils.isEnderDimension(evt.origin) ||
-			WorldUtils.isEnderDimension(evt.options.getDimensionUID())) {
+				WorldUtils.isEnderDimension(evt.options.getDimensionUID())) {
 			evt.setCanceled(true);
 		}
 	}
-	
+
 }

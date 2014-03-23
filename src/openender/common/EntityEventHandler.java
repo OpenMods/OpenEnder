@@ -16,7 +16,8 @@ import openender.utils.WorldUtils;
 public class EntityEventHandler {
 
 	/**
-	 * If the user falls into the void in an ender dimension, we remove them from the
+	 * If the user falls into the void in an ender dimension, we remove them
+	 * from the
 	 * world and make sure they don't get hurt.
 	 */
 	@ForgeSubscribe
@@ -25,14 +26,14 @@ public class EntityEventHandler {
 		if (e.entity instanceof EntityPlayerMP && e.source == DamageSource.outOfWorld) {
 
 			EntityPlayerMP player = (EntityPlayerMP)e.entity;
-			
+
 			if (WorldUtils.isEnderDimension(player.worldObj)) {
 				removePlayerFromDimension(player);
 				e.setCanceled(true);
 			}
 		}
 	}
-	
+
 	/**
 	 * If a user joins the world, give them a guide if they require once.
 	 * If it's an ender dimension with an owner, but the owner isn't our player
@@ -40,33 +41,33 @@ public class EntityEventHandler {
 	 */
 	@ForgeSubscribe
 	public void onEntityJoinWorld(EntityJoinWorldEvent event) {
-		
+
 		if (!event.world.isRemote && event.entity instanceof EntityPlayer) {
-		
-			EntityPlayer player = (EntityPlayer) event.entity;
+
+			EntityPlayer player = (EntityPlayer)event.entity;
 			ItemGuide.giveGuideIfRequired(player);
-			
+
 			final World world = event.world;
-			
+
 			System.out.println(world);
-			
+
 			if (WorldUtils.isEnderDimension(world)) {
-				
+
 				final String owner = DimensionDataManager.instance.getDimensionOwner(
 						world.provider.dimensionId
-				);
-				
+						);
+
 				if (owner != null && player.username.equals(owner)) {
 					event.setCanceled(true);
 				}
-				
+
 			}
 		}
-		
+
 	}
-	
+
 	private void removePlayerFromDimension(EntityPlayer player) {
-		
+
 		int dimensionId = 0;
 		ChunkCoordinates position = player.getBedLocation(0);
 
