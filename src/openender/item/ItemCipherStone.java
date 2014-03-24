@@ -52,9 +52,9 @@ public class ItemCipherStone extends Item {
 				NBTTagCompound inventoryTag = getInventoryTag(stack);
 				final int lockedWorldId = DimensionDataManager.instance.getDimensionForKey(inventoryTag);
 				if (lockedWorldId != world.provider.dimensionId) {
-					PlayerDataManager.pushSpawnLocation(player);
-					WorldUtils.strikeAreaAroundPlayer(world, player, 10, 2);
-					EnderTeleporter.teleport(player, lockedWorldId);
+					//PlayerDataManager.pushSpawnLocation(player);
+					WorldUtils.strikeAreaAroundPlayer(world, player, 10, 5);
+					//EnderTeleporter.teleport(player, lockedWorldId);
 				}
 			}
 		}

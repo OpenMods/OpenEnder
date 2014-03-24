@@ -59,7 +59,7 @@ public class ItemEnderStone extends Item {
 			final int privateWorldId = DimensionDataManager.instance.getDimensionForPlayer(player.username);
 			if (privateWorldId != world.provider.dimensionId) {
 				PlayerDataManager.pushSpawnLocation(player);
-				WorldUtils.strikeAreaAroundPlayer(world, player, 10, 2);
+				WorldUtils.strikeAreaAroundPlayer(world, player, 10, 5);
 				EnderTeleporter.teleport(player, privateWorldId);
 			}
 		}
