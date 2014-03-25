@@ -2,7 +2,6 @@ package openender.item;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,9 +13,7 @@ import openender.common.EnderTeleporter;
 import openender.common.OpenEnderGuiHandler;
 import openender.utils.PlayerDataManager;
 import openender.utils.WorldUtils;
-import openmods.GenericInventory;
 import openmods.ItemInventory;
-import openmods.api.IInventoryCallback;
 import openmods.utils.ItemUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

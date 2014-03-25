@@ -87,7 +87,7 @@ public class OpenEnder {
 		if (Loader.isModLoaded(Mods.MYSTCRAFT)) {
 			MinecraftForge.EVENT_BUS.register(new MystcraftEventHandler());
 		}
-		
+
 		proxy.init();
 		proxy.registerRenderInformation();
 	}

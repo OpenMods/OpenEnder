@@ -1,9 +1,7 @@
 package openender.common;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.world.World;
-import openender.OpenEnder;
 import openender.container.ContainerCipherKey;
 import openender.gui.GuiCipherKey;
 import openender.gui.GuiGuide;

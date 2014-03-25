@@ -6,7 +6,6 @@ import openender.OpenEnder.Items;
 import openender.gui.pages.BlankPage;
 import openender.gui.pages.TitledPage;
 import openmods.gui.component.GuiComponentBook;
-import openmods.gui.component.GuiComponentLabel;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -18,8 +17,6 @@ public class GuiGuide extends GuiScreen {
 	private int guiTop;
 
 	private GuiComponentBook book;
-	private GuiComponentLabel lblEnder;
-	private GuiComponentLabel lblLocked;
 
 	public GuiGuide() {
 		book = new GuiComponentBook();

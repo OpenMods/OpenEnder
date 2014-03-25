@@ -20,8 +20,8 @@ public class WorldUtils {
 
 	public static void strikeAreaAroundPlayer(World world, EntityPlayer player, int strikes, double distance) {
 		for (int a = 0; a < 360; a += 360 / strikes) {
-			double x = distance * Math.cos((double)a * (Math.PI / 180));
-			double z = distance * Math.sin((double)a * (Math.PI / 180));
+			double x = distance * Math.cos(a * (Math.PI / 180));
+			double z = distance * Math.sin(a * (Math.PI / 180));
 			world.addWeatherEffect(new EntityLightningBolt(world, player.posX + x, player.posY, player.posZ + z));
 		}
 	}
