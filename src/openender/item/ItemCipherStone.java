@@ -52,9 +52,9 @@ public class ItemCipherStone extends Item {
 				NBTTagCompound inventoryTag = getInventoryTag(stack);
 				final int lockedWorldId = DimensionDataManager.instance.getDimensionForKey(inventoryTag);
 				if (lockedWorldId != world.provider.dimensionId) {
-					//PlayerDataManager.pushSpawnLocation(player);
+					PlayerDataManager.pushSpawnLocation(player);
 					WorldUtils.strikeAreaAroundPlayer(world, player, 10, 5);
-					//EnderTeleporter.teleport(player, lockedWorldId);
+					EnderTeleporter.teleport(player, lockedWorldId);
 				}
 			}
 		}
@@ -83,7 +83,7 @@ public class ItemCipherStone extends Item {
 	public IInventory getItemInventory(final EntityPlayer player) {
 
 		final int slot = player.inventory.currentItem;
-		final ItemStack stack = player.inventory.getStackInSlot(slot);
+		final ItemStack stack = player.inventory.getCurrentItem();
 
 		final NBTTagCompound tag = ItemUtils.getItemTag(stack);
 		final NBTTagCompound inventoryTag = getInventoryTag(stack);
@@ -94,6 +94,11 @@ public class ItemCipherStone extends Item {
 		inventory.addCallback(new IInventoryCallback() {
 			@Override
 			public void onInventoryChanged(IInventory inv, int slotNumber) {
+				ItemStack currentItem = player.inventory.getCurrentItem();
+				if (currentItem == null || !stack.isItemEqual(currentItem)) {
+					player.closeScreen();
+					return;
+				}
 				inventory.writeToNBT(inventoryTag);
 				tag.setTag(TAG_INVENTORY, inventoryTag);
 				stack.setTagCompound(tag);
