@@ -49,33 +49,28 @@ public class EntityEventHandler {
 
 			final World world = event.world;
 
-			System.out.println(world);
-
 			if (WorldUtils.isEnderDimension(world)) {
 
-				final String owner = DimensionDataManager.instance.getDimensionOwner(
-						world.provider.dimensionId
-						);
+				final String owner = DimensionDataManager.instance.getDimensionOwner(world.provider.dimensionId);
 
 				if (owner != null && player.username.equals(owner)) {
 					event.setCanceled(true);
 				}
-
 			}
 		}
-
 	}
 
-	private void removePlayerFromDimension(EntityPlayer player) {
-
-		int dimensionId = 0;
-		ChunkCoordinates position = player.getBedLocation(0);
-
+	private static void removePlayerFromDimension(EntityPlayer player) {
 		SpawnLocation location = PlayerDataManager.popSpawnLocation(player);
 
+		int dimensionId;
+		ChunkCoordinates position;
 		if (location != null) {
 			dimensionId = location.dimensionId;
 			position = location.position;
+		} else {
+			dimensionId = 0;
+			position = player.getBedLocation(0);
 		}
 
 		EnderTeleporter.teleport(player, dimensionId, position);

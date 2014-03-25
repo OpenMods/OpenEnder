@@ -1,10 +1,9 @@
 package openender.common;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
@@ -14,27 +13,27 @@ import openender.utils.WorldUtils;
 import openmods.Log;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
 
 public class DimensionDataManager {
 
-	private static final String DIMENSION_ID = "OEDims";
+	private static final String DIMENSION_ID = "open-ender-dims";
 
 	public static final DimensionDataManager instance = new DimensionDataManager();
 
 	public static class DimensionsData extends WorldSavedData {
 
-		private static final String MANAGED_TAG = "AllDimensions";
-		private static final String PRIVATE_TAG = "PrivateDimensions";
-		private static final String CODED_TAG = "CodedDimensions";
+		private static final String ROOT_TAG = "Dimensions";
+
+		private static final String PLAYER_TAG = "Player";
 		private static final String DIMENSION_TAG = "Dimension";
 		private static final String CODE_TAG = "Code";
 
 		private final Set<Integer> ownedDims = Sets.newHashSet();
-		private NBTTagCompound playerDims = new NBTTagCompound();
-		private Map<NBTTagCompound, Integer> codedDims = Maps.newHashMap();
+		private BiMap<String, Integer> playerDims = HashBiMap.create();
+		private BiMap<NBTTagCompound, Integer> codedDims = HashBiMap.create();
 
 		public DimensionsData(String id) {
 			super(id);
@@ -42,39 +41,64 @@ public class DimensionDataManager {
 
 		@Override
 		public void readFromNBT(NBTTagCompound tag) {
-			for (int dim : tag.getIntArray(MANAGED_TAG))
-				ownedDims.add(dim);
+			NBTTagList dimensionsData = tag.getTagList(ROOT_TAG);
+			for (int i = 0; i < dimensionsData.tagCount(); i++) {
+				NBTTagCompound entry = (NBTTagCompound)dimensionsData.tagAt(i);
 
-			playerDims = (NBTTagCompound)tag.getCompoundTag(PRIVATE_TAG).copy();
+				int dimensionId = entry.getInteger(DIMENSION_TAG);
+				boolean isNew = ownedDims.add(dimensionId);
+				if (!isNew) {
+					Log.severe("Dimension id %s occured more than once in data list", dimensionId);
+					continue;
+				}
 
-			NBTTagList codedDims = tag.getTagList(CODED_TAG);
-			for (int i = 0; i < codedDims.tagCount(); i++) {
-				NBTTagCompound entry = (NBTTagCompound)codedDims.tagAt(i);
-				NBTTagCompound code = entry.getCompoundTag(CODE_TAG);
-				int dimension = entry.getInteger(DIMENSION_TAG);
+				if (entry.hasKey(PLAYER_TAG)) {
+					String playerName = entry.getString(PLAYER_TAG);
+					try {
+						Integer prev = playerDims.put(playerName, dimensionId);
+						if (prev != null) {
+							Log.severe("Player %s has more than two private dimensions: %s, %s", playerName, dimensionId, prev);
+							continue;
+						}
+					} catch (IllegalArgumentException e) {
+						Log.severe("Dimension %d is marked as private dimension for more than two players", dimensionId);
+					}
+				}
 
-				if (ownedDims.contains(dimension)) {
-					this.codedDims.put((NBTTagCompound)code.copy(), dimension);
-				} else {
-					Log.severe("Data inconsistency: dimension %d (code %s) is not registered as ours!", dimension, code);
+				if (entry.hasKey(CODE_TAG)) {
+					NBTTagCompound key = entry.getCompoundTag(CODE_TAG);
+
+					try {
+						Integer prev = codedDims.put(key, dimensionId);
+						if (prev != null) {
+							Log.severe("Key %s is associated with more than two private dimensions: %s, %s", key, dimensionId, prev);
+							continue;
+						}
+					} catch (IllegalArgumentException e) {
+						Log.severe("Dimension %d has more than two keys", dimensionId);
+					}
 				}
 			}
+
 		}
 
 		@Override
 		public void writeToNBT(NBTTagCompound tag) {
-			tag.setIntArray(MANAGED_TAG, Ints.toArray(ownedDims));
-			tag.setTag(PRIVATE_TAG, playerDims.copy());
+			NBTTagList dimensionData = new NBTTagList();
 
-			NBTTagList codedDims = new NBTTagList();
-			for (Map.Entry<NBTTagCompound, Integer> e : this.codedDims.entrySet()) {
+			for (Integer dimensionId : ownedDims) {
 				NBTTagCompound entry = new NBTTagCompound();
-				entry.setCompoundTag(CODE_TAG, e.getKey());
-				entry.setInteger(DIMENSION_TAG, e.getValue());
-				codedDims.appendTag(entry);
+				entry.setInteger(DIMENSION_TAG, dimensionId);
+
+				NBTTagCompound code = codedDims.inverse().get(dimensionId);
+				if (code != null) entry.setTag(CODE_TAG, code.copy());
+
+				String playerName = playerDims.inverse().get(dimensionId);
+				if (playerName != null) entry.setString(PLAYER_TAG, playerName);
+				dimensionData.appendTag(entry);
 			}
 
-			tag.setTag(CODED_TAG, codedDims);
+			tag.setTag(ROOT_TAG, dimensionData);
 		}
 
 		private void registerDims() {
@@ -106,7 +130,6 @@ public class DimensionDataManager {
 		}
 
 		public int getDimensionForCode(NBTTagCompound keyCode) {
-
 			// need to ensure names match
 			if (keyCode != null) {
 				keyCode = (NBTTagCompound)keyCode.copy();
@@ -125,29 +148,17 @@ public class DimensionDataManager {
 		}
 
 		public String getDimensionOwner(int dimensionId) {
-
-			Collection<NBTBase> entries = playerDims.getTags();
-			for (NBTBase entry : entries) {
-				if (entry instanceof NBTTagInt) {
-					int dimId = ((NBTTagInt)entry).data;
-					if (dimId == dimensionId) return entry.getName();
-				}
-			}
-
-			return null;
+			return playerDims.inverse().get(dimensionId);
 		}
 
 		public int getDimensionForPlayer(String playerName) {
-			NBTBase entry = playerDims.getTag(playerName);
+			Integer dimensionId = playerDims.get(playerName);
 
-			if (entry instanceof NBTTagInt) {
-				int dimensionId = ((NBTTagInt)entry).data;
-				if (isValidEnderDimension(dimensionId)) return dimensionId;
-			}
+			if (dimensionId != null) return dimensionId;
 
 			int newDimensionId = registerNewDimension();
 			Log.info("No valid dimension for player %s, registering new %d", playerName, newDimensionId);
-			playerDims.setInteger(playerName, newDimensionId);
+			playerDims.put(playerName, newDimensionId);
 			setDirty(true);
 			return newDimensionId;
 		}
