@@ -15,6 +15,7 @@ import openender.common.OpenEnderGuiHandler;
 import openender.utils.PlayerDataManager;
 import openender.utils.WorldUtils;
 import openmods.GenericInventory;
+import openmods.ItemInventory;
 import openmods.api.IInventoryCallback;
 import openmods.utils.ItemUtils;
 import cpw.mods.fml.relauncher.Side;
@@ -49,7 +50,8 @@ public class ItemCipherStone extends Item {
 
 		if (locked) {
 			if (ItemEnderStone.canPlayerTeleport(world, player)) {
-				NBTTagCompound inventoryTag = getInventoryTag(stack);
+				NBTTagCompound itemTag = ItemUtils.getItemTag(stack);
+				NBTTagCompound inventoryTag = ItemInventory.getInventoryTag(itemTag);
 				final int lockedWorldId = DimensionDataManager.instance.getDimensionForKey(inventoryTag);
 				if (lockedWorldId != world.provider.dimensionId) {
 					PlayerDataManager.pushSpawnLocation(player);
@@ -72,41 +74,6 @@ public class ItemCipherStone extends Item {
 		if (currentItem == null) return;
 		NBTTagCompound tag = ItemUtils.getItemTag(currentItem);
 		tag.setBoolean(TAG_LOCKED, true);
-	}
-
-	public NBTTagCompound getInventoryTag(ItemStack stack) {
-		final NBTTagCompound tag = ItemUtils.getItemTag(stack);
-		final NBTTagCompound inventoryTag = tag.getCompoundTag(TAG_INVENTORY);
-		return inventoryTag;
-	}
-
-	public IInventory getItemInventory(final EntityPlayer player) {
-
-		final int slot = player.inventory.currentItem;
-		final ItemStack stack = player.inventory.getCurrentItem();
-
-		final NBTTagCompound tag = ItemUtils.getItemTag(stack);
-		final NBTTagCompound inventoryTag = getInventoryTag(stack);
-
-		final GenericInventory inventory = new GenericInventory("", false, 6);
-		inventory.readFromNBT(inventoryTag);
-
-		inventory.addCallback(new IInventoryCallback() {
-			@Override
-			public void onInventoryChanged(IInventory inv, int slotNumber) {
-				ItemStack currentItem = player.inventory.getCurrentItem();
-				if (currentItem == null || !stack.isItemEqual(currentItem)) {
-					player.closeScreen();
-					return;
-				}
-				inventory.writeToNBT(inventoryTag);
-				tag.setTag(TAG_INVENTORY, inventoryTag);
-				stack.setTagCompound(tag);
-				player.inventory.setInventorySlotContents(slot, stack);
-			}
-		});
-
-		return inventory;
 	}
 
 	@Override

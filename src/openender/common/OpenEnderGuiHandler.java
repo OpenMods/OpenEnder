@@ -7,6 +7,7 @@ import openender.OpenEnder;
 import openender.container.ContainerCipherKey;
 import openender.gui.GuiCipherKey;
 import openender.gui.GuiGuide;
+import openmods.ItemInventory;
 import openmods.Log;
 import cpw.mods.fml.common.network.IGuiHandler;
 
@@ -35,8 +36,7 @@ public class OpenEnderGuiHandler implements IGuiHandler {
 
 		switch (guiId) {
 			case cipherKey:
-				IInventory inventory = OpenEnder.Items.cipherStone.getItemInventory(player);
-				return new ContainerCipherKey(player.inventory, inventory);
+				return new ContainerCipherKey(player.inventory, new ItemInventory(player, 6));
 			default:
 				return null;
 		}
